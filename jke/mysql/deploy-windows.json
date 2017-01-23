@@ -1,0 +1,236 @@
+{
+    "name": "deploy-windows",
+    "component": "MySQL Server",
+    "description": "Install MySQL Server",
+    "defaultWorkingDir": "${p:resource\/work.dir}\/${p:component.name}",
+    "takesVersion": true,
+    "inventoryActionType": "ADD",
+    "status": "Active",
+    "configActionType": "ADD",
+    "active": true,
+    "path": "components\/db5c4fca-ba01-4d25-a968-8c0373c5b0fb\/processes\/85c9a11e-a5c9-43c5-ae90-114585a01bf7",
+    "propDefs": [],
+    "rootActivity": {
+        "edges": [
+            {
+                "to": "4ca7b4637565245c76c45aca105bb8",
+                "from": "Start MySQL Service",
+                "type": "SUCCESS",
+                "value": ""
+            },
+            {
+                "to": "Create MySQL Install Dir",
+                "from": "Download Artifacts",
+                "type": "SUCCESS",
+                "value": ""
+            },
+            {
+                "to": "Download Artifacts",
+                "type": "ALWAYS",
+                "value": ""
+            },
+            {
+                "to": "Open Port in Firewall",
+                "from": "Install MySQL as a Service",
+                "type": "SUCCESS",
+                "value": ""
+            },
+            {
+                "to": "Start MySQL Service",
+                "from": "Open Port in Firewall",
+                "type": "SUCCESS",
+                "value": ""
+            },
+            {
+                "to": "Install MySQL as a Service",
+                "from": "Unzip MySQL Installation Archive",
+                "type": "SUCCESS",
+                "value": ""
+            },
+            {
+                "to": "Unzip MySQL Installation Archive",
+                "from": "Create MySQL Install Dir",
+                "type": "SUCCESS",
+                "value": ""
+            }
+        ],
+        "offsets": [
+            {
+                "name": "Create MySQL Install Dir",
+                "x": -65,
+                "y": 260,
+                "h": 60,
+                "w": 210
+            },
+            {
+                "name": "Install MySQL as a Service",
+                "x": -70,
+                "y": 580,
+                "h": 60,
+                "w": 220
+            },
+            {
+                "name": "Start MySQL Service",
+                "x": -55,
+                "y": 900,
+                "h": 60,
+                "w": 190
+            },
+            {
+                "name": "Download Artifacts",
+                "x": -70,
+                "y": 110,
+                "h": 60,
+                "w": 220
+            },
+            {
+                "name": "Open Port in Firewall",
+                "x": -55,
+                "y": 730,
+                "h": 60,
+                "w": 190
+            },
+            {
+                "name": "Unzip MySQL Installation Archive",
+                "x": -90,
+                "y": 410,
+                "h": 60,
+                "w": 260
+            },
+            {
+                "name": "4ca7b4637565245c76c45aca105bb8",
+                "x": -5,
+                "y": 1040,
+                "h": 50,
+                "w": 90
+            }
+        ],
+        "type": "graph",
+        "name": "1b5945f9-df4b-4a60-886f-a4a4a5a5a921",
+        "children": [
+            {
+                "type": "finish",
+                "name": "4ca7b4637565245c76c45aca105bb8",
+                "children": []
+            },
+            {
+                "allowFailure": false,
+                "useImpersonation": false,
+                "showHidden": false,
+                "impersonationUseSudo": false,
+                "commandName": "Download Artifacts",
+                "pluginName": "IBM UrbanCode Deploy Versioned File Storage",
+                "pluginVersion": 26,
+                "properties": {
+                    "directoryOffset": ".",
+                    "artifactSetBaseDir": "",
+                    "fileIncludePatterns": "**\/*.zip",
+                    "fileExcludePatterns": "",
+                    "syncMode": "true",
+                    "fullVerification": "true",
+                    "setFileExecuteBits": "false",
+                    "verifyFileIntegrity": "false",
+                    "versionId": "${p:version.id}",
+                    "serverUrl": "${p:server.url}",
+                    "compId": "${p:component.id}",
+                    "resId": "${p:resource.id}",
+                    "charset": "",
+                    "label": ""
+                },
+                "type": "plugin",
+                "name": "Download Artifacts",
+                "children": []
+            },
+            {
+                "allowFailure": false,
+                "useImpersonation": false,
+                "showHidden": false,
+                "impersonationUseSudo": false,
+                "commandName": "Create Directories",
+                "pluginName": "File Utils",
+                "pluginVersion": 46,
+                "properties": {"dir": "C:\\MySQL\n"},
+                "type": "plugin",
+                "name": "Create MySQL Install Dir",
+                "children": []
+            },
+            {
+                "allowFailure": false,
+                "useImpersonation": false,
+                "showHidden": false,
+                "impersonationUseSudo": false,
+                "commandName": "Unzip",
+                "pluginName": "File Utils",
+                "pluginVersion": 46,
+                "properties": {
+                    "dir": "C:\\MySQL",
+                    "zip": "mysql-*.zip",
+                    "includes": "**\/*",
+                    "excludes": "",
+                    "overwrite": "true"
+                },
+                "type": "plugin",
+                "name": "Unzip MySQL Installation Archive",
+                "children": []
+            },
+            {
+                "allowFailure": false,
+                "useImpersonation": false,
+                "showHidden": false,
+                "impersonationUseSudo": false,
+                "workingDir": "C:\\MySQL\\bin",
+                "commandName": "Shell",
+                "pluginName": "Shell",
+                "pluginVersion": 6,
+                "properties": {
+                    "directoryOffset": ".",
+                    "shellInterpreter": "",
+                    "scriptBody": "mysqld --install",
+                    "runAsDaemon": "false",
+                    "outputFile": ""
+                },
+                "type": "plugin",
+                "name": "Install MySQL as a Service",
+                "children": []
+            },
+            {
+                "allowFailure": false,
+                "useImpersonation": false,
+                "showHidden": false,
+                "impersonationUseSudo": false,
+                "commandName": "Shell",
+                "pluginName": "Shell",
+                "pluginVersion": 6,
+                "properties": {
+                    "directoryOffset": ".",
+                    "shellInterpreter": "",
+                    "scriptBody": "net start mysql",
+                    "runAsDaemon": "false",
+                    "outputFile": ""
+                },
+                "type": "plugin",
+                "name": "Start MySQL Service",
+                "children": []
+            },
+            {
+                "allowFailure": false,
+                "useImpersonation": false,
+                "showHidden": false,
+                "impersonationUseSudo": false,
+                "commandName": "Shell",
+                "pluginName": "Shell",
+                "pluginVersion": 6,
+                "properties": {
+                    "directoryOffset": ".",
+                    "shellInterpreter": "",
+                    "scriptBody": "netsh advfirewall firewall add rule name=\"WAS Liberty Default HTTP Port\" dir=in action=allow protocol=TCP localport=3306",
+                    "runAsDaemon": "false",
+                    "outputFile": ""
+                },
+                "type": "plugin",
+                "name": "Open Port in Firewall",
+                "children": []
+            }
+        ]
+    }
+}

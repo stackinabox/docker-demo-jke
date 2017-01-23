@@ -1,0 +1,243 @@
+{
+    "name": "deploy-ubuntu",
+    "component": "MySQL Server",
+    "description": "Install MySQL Server",
+    "defaultWorkingDir": "${p:resource\/work.dir}\/${p:component.name}",
+    "takesVersion": true,
+    "inventoryActionType": "ADD",
+    "status": "Active",
+    "configActionType": "ADD",
+    "active": true,
+    "path": "components\/db5c4fca-ba01-4d25-a968-8c0373c5b0fb\/processes\/f6d4d314-ba84-4dbe-8dfa-8363bd91eab3",
+    "propDefs": [],
+    "rootActivity": {
+        "edges": [
+            {
+                "to": "Install MySQL",
+                "from": "Download Artifacts",
+                "type": "SUCCESS",
+                "value": ""
+            },
+            {
+                "to": "4ca7b4637565245c76c45aca105bb8",
+                "from": "Start MySQL",
+                "type": "SUCCESS",
+                "value": ""
+            },
+            {
+                "to": "configure mysql",
+                "from": "Stop MySQL",
+                "type": "SUCCESS",
+                "value": ""
+            },
+            {
+                "to": "Start MySQL",
+                "from": "Open Port in Firewall",
+                "type": "ALWAYS",
+                "value": ""
+            },
+            {
+                "to": "Download Artifacts",
+                "type": "ALWAYS",
+                "value": ""
+            },
+            {
+                "to": "Open Port in Firewall",
+                "from": "configure mysql",
+                "type": "SUCCESS",
+                "value": ""
+            },
+            {
+                "to": "Stop MySQL",
+                "from": "Install MySQL",
+                "type": "SUCCESS",
+                "value": ""
+            }
+        ],
+        "offsets": [
+            {
+                "name": "configure mysql",
+                "x": -57.5,
+                "y": 440,
+                "h": 50,
+                "w": 220
+            },
+            {
+                "name": "Install MySQL",
+                "x": -35,
+                "y": 220,
+                "h": 50,
+                "w": 210
+            },
+            {
+                "name": "Download Artifacts",
+                "x": -102.5,
+                "y": 110,
+                "h": 50,
+                "w": 320
+            },
+            {
+                "name": "4ca7b4637565245c76c45aca105bb8",
+                "x": 12.5,
+                "y": 810,
+                "h": 50,
+                "w": 90
+            },
+            {
+                "name": "Open Port in Firewall",
+                "x": -42.5,
+                "y": 530,
+                "h": 60,
+                "w": 190
+            },
+            {
+                "name": "Start MySQL",
+                "x": -22.5,
+                "y": 640,
+                "h": 60,
+                "w": 150
+            },
+            {
+                "name": "Stop MySQL",
+                "x": -30,
+                "y": 340,
+                "h": 50,
+                "w": 200
+            }
+        ],
+        "type": "graph",
+        "name": "a4274f55-1b9d-46cd-9a29-08c7027d3397",
+        "children": [
+            {
+                "type": "finish",
+                "name": "4ca7b4637565245c76c45aca105bb8",
+                "children": []
+            },
+            {
+                "allowFailure": false,
+                "useImpersonation": false,
+                "showHidden": false,
+                "impersonationUseSudo": false,
+                "workingDir": "\/var\/cache\/apt\/archives",
+                "commandName": "Shell",
+                "pluginName": "Shell",
+                "pluginVersion": 6,
+                "properties": {
+                    "directoryOffset": ".",
+                    "shellInterpreter": "",
+                    "scriptBody": "\nexport DEBIAN_FRONTEND=noninteractive\ndpkg -i psm*.deb  lib*.deb mysql-common*.deb\ndpkg -i mysql-client-*.deb\ndpkg -i mysql-server-*.deb \ndpkg -i mysql-server_*.deb\n",
+                    "runAsDaemon": "false",
+                    "outputFile": ""
+                },
+                "type": "plugin",
+                "name": "Install MySQL",
+                "children": []
+            },
+            {
+                "allowFailure": false,
+                "useImpersonation": false,
+                "showHidden": false,
+                "impersonationUseSudo": false,
+                "workingDir": "\/var\/cache\/apt\/archives",
+                "commandName": "Download Artifacts",
+                "pluginName": "IBM UrbanCode Deploy Versioned File Storage",
+                "pluginVersion": 26,
+                "properties": {
+                    "directoryOffset": ".",
+                    "artifactSetBaseDir": "",
+                    "fileIncludePatterns": "**\/*.deb",
+                    "fileExcludePatterns": "",
+                    "syncMode": "FULL",
+                    "fullVerification": "true",
+                    "setFileExecuteBits": "false",
+                    "verifyFileIntegrity": "false",
+                    "versionId": "${p:version.id}",
+                    "serverUrl": "${p:server.url}",
+                    "compId": "${p:component.id}",
+                    "resId": "${p:resource.id}",
+                    "charset": "",
+                    "label": ""
+                },
+                "type": "plugin",
+                "name": "Download Artifacts",
+                "children": []
+            },
+            {
+                "allowFailure": false,
+                "useImpersonation": false,
+                "showHidden": false,
+                "impersonationUseSudo": false,
+                "commandName": "Shell",
+                "pluginName": "Shell",
+                "pluginVersion": 6,
+                "properties": {
+                    "directoryOffset": ".",
+                    "shellInterpreter": "",
+                    "scriptBody": "service mysql start;",
+                    "runAsDaemon": "true",
+                    "outputFile": ""
+                },
+                "type": "plugin",
+                "name": "Start MySQL",
+                "children": []
+            },
+            {
+                "allowFailure": false,
+                "useImpersonation": false,
+                "showHidden": false,
+                "impersonationUseSudo": false,
+                "commandName": "Shell",
+                "pluginName": "Shell",
+                "pluginVersion": 6,
+                "properties": {
+                    "directoryOffset": ".",
+                    "shellInterpreter": "",
+                    "scriptBody": "iptables -A INPUT -p tcp --dport 3306 -j ACCEPT",
+                    "runAsDaemon": "false",
+                    "outputFile": ""
+                },
+                "type": "plugin",
+                "name": "Open Port in Firewall",
+                "children": []
+            },
+            {
+                "allowFailure": false,
+                "useImpersonation": false,
+                "showHidden": false,
+                "impersonationUseSudo": false,
+                "commandName": "Shell",
+                "pluginName": "Shell",
+                "pluginVersion": 6,
+                "properties": {
+                    "directoryOffset": ".",
+                    "shellInterpreter": "",
+                    "scriptBody": "# bind mysqld listen port to all network interfaces\nsed -i '\/bind-address\/c\\#' \/etc\/mysql\/my.cnf\nsed -i '\/symbolic-links\/c\\#' \/etc\/mysql\/my.cnf",
+                    "runAsDaemon": "false",
+                    "outputFile": ""
+                },
+                "type": "plugin",
+                "name": "configure mysql",
+                "children": []
+            },
+            {
+                "allowFailure": false,
+                "useImpersonation": false,
+                "showHidden": false,
+                "impersonationUseSudo": false,
+                "commandName": "Shell",
+                "pluginName": "Shell",
+                "pluginVersion": 6,
+                "properties": {
+                    "directoryOffset": ".",
+                    "shellInterpreter": "",
+                    "scriptBody": "# stop mysql\nservice mysql stop;\n",
+                    "runAsDaemon": "false",
+                    "outputFile": ""
+                },
+                "type": "plugin",
+                "name": "Stop MySQL",
+                "children": []
+            }
+        ]
+    }
+}
