@@ -85,7 +85,7 @@ curl -u $DS_USERNAME:$DS_PASSWORD \
 echo -ne '##########################              (70%)\r'
 udclient createComponent /jke/jke.war/jke.war.json >> /jke/init.log 2>&1
 udclient createComponentProcess /jke/jke.war/deploy.json >> /jke/init.log 2>&1
-udclient createVersion -component jke.war -name 1.0 >> /jke/init.log 2>&
+udclient createVersion -component jke.war -name 1.0 >> /jke/init.log 2>&1
 echo -ne '##############################          (80%)\r'
 udclient addVersionFiles -component jke.war -version 1.0 -base /jke/jke.war/artifacts/ -exclude .DS_Store >> /jke/init.log 2>&1
 jkeWarId=`udclient getComponent -component jke.war | python -c \
