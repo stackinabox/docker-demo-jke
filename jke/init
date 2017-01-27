@@ -1,5 +1,11 @@
 #!/bin/bash
 
+cat << 'EOF'
+Importing UCD artifacts for jke demo...
+EOF
+
+echo -ne '                                        (0%)\r'
+
 # # source environment variables for OpenStack and UCD
 # source ~/openrc
 
@@ -9,21 +15,25 @@ DS_PASSWORD=admin
 DS_WEB_URL=http://192.168.27.100:8080
 
 # add example jke application to UCD
-curl --verbose -u $DS_USERNAME:$DS_PASSWORD -s --insecure -F "file=@/jke/plugins/WebSphereLiberty-10.848664.zip;type=application/zip" -F "filename=WebSphereLiberty-10.848664.zip.zip" $DS_WEB_URL/rest/plugin/automationPlugin
+curl --verbose -u $DS_USERNAME:$DS_PASSWORD -s --insecure -F "file=@/jke/plugins/WebSphereLiberty-10.848664.zip;type=application/zip" -F "filename=WebSphereLiberty-10.848664.zip.zip" $DS_WEB_URL/rest/plugin/automationPlugin >> /jke/init.log 2>&1
 
-udclient createComponent /jke/mysql/MySQL+Server.json
-udclient createComponentProcess /jke/mysql/deploy-ubuntu.json
-udclient createComponentProcess /jke/mysql/deploy-windows.json
-udclient createComponentProcess /jke/mysql/deploy.json
-udclient createVersion -component "MySQL Server" -name 5.5.49
-udclient addVersionFiles -component "MySQL Server" -version 5.5.49 -base /jke/mysql/artifacts/ -exclude .DS_Store
+udclient createComponent /jke/mysql/MySQL+Server.json >> /jke/init.log 2>&1
+udclient createComponentProcess /jke/mysql/deploy-ubuntu.json >> /jke/init.log 2>&1
+echo -ne '####                                    (10%)\r'
+udclient createComponentProcess /jke/mysql/deploy-windows.json >> /jke/init.log 2>&1
+udclient createComponentProcess /jke/mysql/deploy.json >> /jke/init.log 2>&1
+udclient createVersion -component "MySQL Server" -name 5.5.49 >> /jke/init.log 2>&1
+echo -ne '########                                (20%)\r'
+udclient addVersionFiles -component "MySQL Server" -version 5.5.49 -base /jke/mysql/artifacts/ -exclude .DS_Store >> /jke/init.log 2>&1
 
-udclient createComponent /jke/wlp/WebSphere+Liberty+Profile.json
-udclient createComponentProcess /jke/wlp/open-firewall-port-ubuntu.json
-udclient createComponentProcess /jke/wlp/open-firewall-port-windows.json
-udclient createComponentProcess /jke/wlp/deploy.json
-udclient createVersion -component "WebSphere Liberty Profile" -name 16.0.0.4
-udclient addVersionFiles -component "WebSphere Liberty Profile" -version 16.0.0.4 -base /jke/wlp/artifacts/ -exclude .DS_Store
+udclient createComponent /jke/wlp/WebSphere+Liberty+Profile.json >> /jke/init.log 2>&1
+udclient createComponentProcess /jke/wlp/open-firewall-port-ubuntu.json >> /jke/init.log 2>&1
+echo -ne '############                            (30%)\r'
+udclient createComponentProcess /jke/wlp/open-firewall-port-windows.json >> /jke/init.log 2>&1
+udclient createComponentProcess /jke/wlp/deploy.json >> /jke/init.log 2>&1
+udclient createVersion -component "WebSphere Liberty Profile" -name 16.0.0.4 >> /jke/init.log 2>&1
+echo -ne '################                        (40%)\r'
+udclient addVersionFiles -component "WebSphere Liberty Profile" -version 16.0.0.4 -base /jke/wlp/artifacts/ -exclude .DS_Store >> /jke/init.log 2>&1
 
 wasLibertyId=`udclient getComponent -component "WebSphere Liberty Profile" | python -c \
 "import json; import sys;
@@ -44,12 +54,14 @@ curl -u $DS_USERNAME:$DS_PASSWORD \
     \"value\": \"/opt/was/liberty\"
   }
 " \
-""$DS_WEB_URL"/property/propSheetDef/components&"$wasLibertyId"&environmentPropSheetDef.-1/propDefs"
+""$DS_WEB_URL"/property/propSheetDef/components&"$wasLibertyId"&environmentPropSheetDef.-1/propDefs" >> /jke/init.log 2>&1
 
-udclient createComponent /jke/jke.db/jke.db.json
-udclient createComponentProcess /jke/jke.db/deploy.json
-udclient createVersion -component jke.db -name 1.0
-udclient addVersionFiles -component jke.db -version 1.0 -base /jke/jke.db/artifacts/ -exclude .DS_Store
+echo -ne '##################                      (50%)\r'
+udclient createComponent /jke/jke.db/jke.db.json >> /jke/init.log 2>&1
+udclient createComponentProcess /jke/jke.db/deploy.json >> /jke/init.log 2>&1
+udclient createVersion -component jke.db -name 1.0 >> /jke/init.log 2>&1
+echo -ne '######################                  (60%)\r'
+udclient addVersionFiles -component jke.db -version 1.0 -base /jke/jke.db/artifacts/ -exclude .DS_Store >> /jke/init.log 2>&1
 jkeDbId=`udclient getComponent -component jke.db | python -c \
 "import json; import sys;
 data=json.load(sys.stdin); print data['id']"`
@@ -69,12 +81,13 @@ curl -u $DS_USERNAME:$DS_PASSWORD \
     \"value\": \"/usr/bin\"
   }
 " \
-""$DS_WEB_URL"/property/propSheetDef/components&"$jkeDbId"&environmentPropSheetDef.-1/propDefs"
-
-udclient createComponent /jke/jke.war/jke.war.json
-udclient createComponentProcess /jke/jke.war/deploy.json
-udclient createVersion -component jke.war -name 1.0
-udclient addVersionFiles -component jke.war -version 1.0 -base /jke/jke.war/artifacts/ -exclude .DS_Store
+""$DS_WEB_URL"/property/propSheetDef/components&"$jkeDbId"&environmentPropSheetDef.-1/propDefs" >> /jke/init.log 2>&1
+echo -ne '##########################              (70%)\r'
+udclient createComponent /jke/jke.war/jke.war.json >> /jke/init.log 2>&1
+udclient createComponentProcess /jke/jke.war/deploy.json >> /jke/init.log 2>&1
+udclient createVersion -component jke.war -name 1.0 >> /jke/init.log 2>&
+echo -ne '##############################          (80%)\r'
+udclient addVersionFiles -component jke.war -version 1.0 -base /jke/jke.war/artifacts/ -exclude .DS_Store >> /jke/init.log 2>&1
 jkeWarId=`udclient getComponent -component jke.war | python -c \
 "import json; import sys;
 data=json.load(sys.stdin); print data['id']"`
@@ -94,8 +107,8 @@ curl -u $DS_USERNAME:$DS_PASSWORD \
     \"value\": \"\"
   }
 " \
-""$DS_WEB_URL"/property/propSheetDef/components&"$jkeWarId"&environmentPropSheetDef.-1/propDefs"
-
+""$DS_WEB_URL"/property/propSheetDef/components&"$jkeWarId"&environmentPropSheetDef.-1/propDefs" >> /jke/init.log 2>&1
+echo -ne '##################################      (90%)\r'
 curl -u $DS_USERNAME:$DS_PASSWORD \
      -H 'Content-Type: application/json' \
      -X PUT \
@@ -111,13 +124,25 @@ curl -u $DS_USERNAME:$DS_PASSWORD \
     \"value\": \"/opt/was/liberty\"
   }
 " \
-""$DS_WEB_URL"/property/propSheetDef/components&"$jkeWarId"&environmentPropSheetDef.-1/propDefs"
+""$DS_WEB_URL"/property/propSheetDef/components&"$jkeWarId"&environmentPropSheetDef.-1/propDefs" >> /jke/init.log 2>&1
 
-udclient createApplication /jke/JKE.json
-udclient addComponentToApplication -component "MySQL Server" -application JKE
-udclient addComponentToApplication -component "WebSphere Liberty Profile" -application JKE
-udclient addComponentToApplication -component jke.db -application JKE
-udclient addComponentToApplication -component jke.war -application JKE
+udclient createApplication /jke/JKE.json >> /jke/init.log 2>&1
+udclient addComponentToApplication -component "MySQL Server" -application JKE >> /jke/init.log 2>&1
+udclient addComponentToApplication -component "WebSphere Liberty Profile" -application JKE >> /jke/init.log 2>&1
+udclient addComponentToApplication -component jke.db -application JKE >> /jke/init.log 2>&1
+udclient addComponentToApplication -component jke.war -application JKE >> /jke/init.log 2>&1
+echo -ne '######################################  (100%)\r'
+
+cat << 'EOF'
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SUCCESS!!!
+
+To get started follow the tutorial steps here:
+https://github.com/stackinabox/stackinabox.io/wiki/JKE-Banking-Full-Stack-Deployment
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+EOF
 
 #/jke/init-tutorial
 
