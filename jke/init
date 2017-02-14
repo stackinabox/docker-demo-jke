@@ -131,6 +131,14 @@ udclient addComponentToApplication -component "MySQL Server" -application JKE >>
 udclient addComponentToApplication -component "WebSphere Liberty Profile" -application JKE >> /jke/init.log 2>&1
 udclient addComponentToApplication -component jke.db -application JKE >> /jke/init.log 2>&1
 udclient addComponentToApplication -component jke.war -application JKE >> /jke/init.log 2>&1
+
+curl -u demo:labstack \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -X POST \
+    -d "{ 'gitUrl':'https://github.com/stackinabox/jke-blueprint.git'}" \
+    http://192.168.27.100:9080/landscaper/rest/repository/clone >> /jke/init.log 2>&1
+
 echo -ne '######################################  (100%)\r'
 
 cat << 'EOF'
